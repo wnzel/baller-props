@@ -50,7 +50,7 @@ def get_player_stats():
                     if not player_stats[team_abbreviation][player]["last_10_game_stats"]:
                         print(f"Fetching stats for {player}")
                         player_stats[team_abbreviation][player]["last_10_game_stats"] = get_last_10_game_stats(player_id)
-                        time.sleep(2)
+                        time.sleep(5)
                         
                         
             todays_stats[game_title] = player_stats

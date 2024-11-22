@@ -11,7 +11,7 @@ function App() {
   }, []);
 
   if (!gameLines) {
-    return <div>Loading...</div>;
+    return <div className="text-red-500">Loading...</div>;
   }
 
   return (

@@ -1,4 +1,5 @@
 import time
+import random
 import requests
 
 from collections import defaultdict
@@ -20,6 +21,7 @@ def format_stats(d):
 
 # games updated at 10am MST 12pm EST
 def get_player_stats():
+    delay = random.uniform(0.5, 1.0)
     teams_today = get_todays_games()
 
     data = None
@@ -41,6 +43,7 @@ def get_player_stats():
             for market in game_markets:
                 for player in game_markets[market]:
                     player_id = get_player_id(player_name=str(player), threshold=90)
+                    time.sleep(delay)
                     team_abbreviation = get_player_team(player_id=player_id)
 
                     line = game_markets[market][player]["line"]  # get current market line
@@ -50,7 +53,7 @@ def get_player_stats():
                     if not player_stats[team_abbreviation][player]["last_10_game_stats"]:
                         print(f"Fetching stats for {player}")
                         player_stats[team_abbreviation][player]["last_10_game_stats"] = get_last_10_game_stats(player_id)
-                        time.sleep(5)
+                        time.sleep(delay)
                         
                         
             todays_stats[game_title] = player_stats

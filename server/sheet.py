@@ -1,5 +1,5 @@
 import pandas as pd
-import json
+from dotenv import load_dotenv
 from openpyxl import load_workbook
 from openpyxl import load_workbook
 from openpyxl.formatting.rule import ColorScaleRule
@@ -7,45 +7,57 @@ from openpyxl.styles import Alignment, Border, Side, PatternFill, Font
 
 from datetime import datetime  # Import datetime module
 
-# Load the JSON data (replace with the actual path to your file)
-with open('todays_stats.json', 'r') as f:
-    data = json.load(f)
+import requests
+import os
+
+load_dotenv()
+BACKEND_URL = os.getenv("BACKEND_URL")
+
+data = None
+res = requests.get(BACKEND_URL)
+
+if res.status_code == 200:
+    data = res.json()
+else:
+    print(f"Failed to get data: {res.status_code}")
+    data = None
 
 # Prepare a list to hold all the rows for the spreadsheet
 spreadsheet_data = []
 
 # Loop through each game and player
 for game_title in data:
-    for player in data[game_title]:
-        lines = data[game_title][player]["lines"]
-        for market in lines:
-            # Get the projected line for the market
-            projected_line = lines[market]
-            
-            # Initialize a counter for times hit over
-            times_hit_over = 0
-            game_stats = []
-            # Loop through the player's last 10 game stats
-            for game in data[game_title][player]["last_10_game_stats"]:
-                game_stats.append(game[market])
-                if game[market] > projected_line:
-                    times_hit_over += 1
-            
-            # Calculate the hit percentage
-            hit_percentage = (times_hit_over / 10) * 100
-            expected_value = sum(game_stats) / len(game_stats) if game_stats else 0
+    for team in data[game_title]:
+        for player in data[game_title][team]:
+            lines = data[game_title][team][player]["lines"]
+            for market in lines:
+                # Get the projected line for the market
+                projected_line = lines[market]
+                
+                # Initialize a counter for times hit over
+                times_hit_over = 0
+                game_stats = []
+                # Loop through the player's last 10 game stats
+                for game in data[game_title][team][player]["last_10_game_stats"]:
+                    game_stats.append(game[market])
+                    if game[market] > projected_line:
+                        times_hit_over += 1
+                
+                # Calculate the hit percentage
+                hit_percentage = (times_hit_over / 10) * 100
+                expected_value = sum(game_stats) / len(game_stats) if game_stats else 0
 
-            # Add the data for this entry to the list
-            spreadsheet_data.append({
-                "Game": game_title,
-                "Player Name": player,
-                "Market": market,
-                "Line": projected_line,
-                "Projection": expected_value,
-                "Times Hit Over": times_hit_over,
-                "Times Hit Under": 10 - times_hit_over,
-                "Hit Percentage": round(hit_percentage, 2)
-            })
+                # Add the data for this entry to the list
+                spreadsheet_data.append({
+                    "Game": game_title,
+                    "Player Name": player,
+                    "Market": market,
+                    "Line": projected_line,
+                    "Projection": expected_value,
+                    "Times Hit Over": times_hit_over,
+                    "Times Hit Under": 10 - times_hit_over,
+                    "Hit Percentage": round(hit_percentage, 2)
+                })
 
 # Create a pandas DataFrame from the collected data
 df = pd.DataFrame(spreadsheet_data)

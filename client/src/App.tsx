@@ -1,25 +1,16 @@
-import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Landing from "./pages/Landing/Landing";
+import NBAPage from "./pages/NBA/NBA";
+
 function App() {
-  const [gameLines, setGameLines] = useState(null);
-
-  useEffect(() => {
-    // test fetch to ensure communication
-    fetch("http://127.0.0.1:5000/api/nba/stats")
-      .then((response) => response.json())
-      .then((data) => setGameLines(data))
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
-
-  if (!gameLines) {
-    return <div className="text-red-500">Loading...</div>;
-  }
-
   return (
     <>
-      <div>
-        <h1>Game Lines</h1>
-        <pre>{JSON.stringify(gameLines, null, 2)}</pre>
-      </div>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/nba" element={<NBAPage />} />
+        </Routes>
+      </Router>
     </>
   );
 }

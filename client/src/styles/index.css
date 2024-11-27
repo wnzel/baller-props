@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
 body {
   font-family: "IBM Plex Sans JP", sans-serif;
+  background-color: #0f0e0e;
+  color: white;
 }

@@ -13,6 +13,8 @@ export default {
         bpGreen: "#59FFA0",
         bpYellow: "#FFBF00",
         bpRed: "#CF293A",
+        bpDarkPrimary: "#0F0E0E",
+        bpDarkSecondary: "#171717",
       },
     },
   },

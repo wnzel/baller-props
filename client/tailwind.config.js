@@ -8,7 +8,13 @@ export default {
     "./index.html",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        bpGreen: "#59FFA0",
+        bpYellow: "#FFBF00",
+        bpRed: "#CF293A",
+      },
+    },
   },
   plugins: [],
 };

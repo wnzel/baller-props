@@ -34,7 +34,8 @@ def get_player_stats():
         
     todays_stats = {}
 
-    for game_title in teams_today:      
+    for game in teams_today:
+        game_title = game["away_tricode"] + " " + game["home_tricode"]      
         if game_title in data: 
             player_stats = defaultdict(lambda: defaultdict(lambda: {"lines": {}, "last_10_game_stats": {}}))
             game_markets = data[game_title]
@@ -52,8 +53,10 @@ def get_player_stats():
                     
                     if not player_stats[team_abbreviation][player]["last_10_game_stats"]:
                         print(f"Fetching stats for {player}")
-                        player_stats[team_abbreviation][player]["last_10_game_stats"] = get_last_10_game_stats(player_id)
-                        time.sleep(delay)
+                        last_1_game_stats, last_5_game_stats, last_10_game_stats = get_last_10_game_stats(player_id=player_id)
+                        player_stats[team_abbreviation][player]["last_1_game_stats"] = last_1_game_stats
+                        player_stats[team_abbreviation][player]["last_5_game_stats"] = last_5_game_stats
+                        player_stats[team_abbreviation][player]["last_10_game_stats"] = last_10_game_stats
                         
                         
             todays_stats[game_title] = player_stats

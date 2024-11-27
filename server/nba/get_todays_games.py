@@ -8,9 +8,19 @@ def get_todays_games():
 
     teams_today = []
     for game in games["scoreboard"]["games"]:
-        home = game["homeTeam"]["teamTricode"]
-        away = game["awayTeam"]["teamTricode"]
-        game = away + " " + home
-        teams_today.append(game)
+        current_game = {
+            "away_team": game["awayTeam"]["teamCity"] + " " + game["awayTeam"]["teamName"],
+            "home_team": game["homeTeam"]["teamCity"] + " " + game["homeTeam"]["teamName"],
+            
+            "away_tricode": game["awayTeam"]["teamTricode"],
+            "home_tricode": game["homeTeam"]["teamTricode"],
+
+            "away_id": game["awayTeam"]["teamId"],
+            "home_id": game["homeTeam"]["teamId"]
+        }
+        
+        teams_today.append(current_game)
     
     return teams_today
+
+print(get_todays_games())

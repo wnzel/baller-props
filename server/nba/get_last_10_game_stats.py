@@ -33,6 +33,7 @@ def get_last_10_game_stats(player_id):
             "FS": fantasy_score,
             "BLK": blocks,
             "STL": steals,
+            "SB": steals + blocks,
             "TO": turnovers
         }
         

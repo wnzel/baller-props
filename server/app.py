@@ -18,10 +18,6 @@ def cache_player_stats():
 # cache stats for frontend
 cache_player_stats()
 
-@app.route("/api/nba", methods=["GET"])
-def game_lines():
-    return jsonify({"message": "Data from backend"})
-
 @app.route("/api/nba/games", methods=["GET"])
 def todays_games():
     games = get_todays_games()

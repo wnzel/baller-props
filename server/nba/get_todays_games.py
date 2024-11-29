@@ -1,26 +1,36 @@
-from nba_api.live.nba.endpoints import scoreboard
+from nba_api.stats.endpoints import scoreboardv2
+from nba_api.stats.static import teams
+from datetime import datetime
+
+def get_full_team_name(team_id):
+    return teams.find_team_name_by_id(team_id=team_id)["full_name"]
+
+def get_team_tricode(team_id):
+    return teams.find_team_name_by_id(team_id=team_id)["abbreviation"]
 
 # games updated at 10am MST 12pm EST
 def get_todays_games():
-    scoreboard_data = scoreboard.ScoreBoard()
-
-    games = scoreboard_data.get_dict()
+    target_date = datetime.now()
+    date_str = target_date.strftime("%Y-%m-%d")
+    
+    scoreboard_data = scoreboardv2.ScoreboardV2(game_date=date_str)
+    games = scoreboard_data.get_data_frames()[0]
 
     teams_today = []
-    for game in games["scoreboard"]["games"]:
+    for _, row in games.iterrows():
         current_game = {
-            "away_team": game["awayTeam"]["teamCity"] + " " + game["awayTeam"]["teamName"],
-            "home_team": game["homeTeam"]["teamCity"] + " " + game["homeTeam"]["teamName"],
+            "game_status": row["GAME_STATUS_ID"], # 1 not started, 2 live, 3 finished
             
-            "away_tricode": game["awayTeam"]["teamTricode"],
-            "home_tricode": game["homeTeam"]["teamTricode"],
-
-            "away_id": game["awayTeam"]["teamId"],
-            "home_id": game["homeTeam"]["teamId"]
+            "home_id": row["HOME_TEAM_ID"],
+            "away_id": row["VISITOR_TEAM_ID"],
+            
+            "home_team": get_full_team_name(int(row["HOME_TEAM_ID"])),
+            "away_team": get_full_team_name(int(row["VISITOR_TEAM_ID"])),
+            
+            "home_tricode": get_team_tricode(int(row["HOME_TEAM_ID"])),
+            "away_tricode": get_team_tricode(int(row["VISITOR_TEAM_ID"]))
         }
         
         teams_today.append(current_game)
     
     return teams_today
-
-print(get_todays_games())

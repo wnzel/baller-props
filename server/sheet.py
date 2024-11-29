@@ -38,7 +38,7 @@ for game_title in data:
                 times_hit_over = 0
                 game_stats = []
                 # Loop through the player's last 10 game stats
-                for game in data[game_title][team][player]["last_10_game_stats"]:
+                for game in data[game_title][team][player]["full_10_game_logs"]:
                     game_stats.append(game[market])
                     if game[market] > projected_line:
                         times_hit_over += 1

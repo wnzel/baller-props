@@ -21,7 +21,7 @@ def format_stats(d):
 
 # games updated at 10am MST 12pm EST
 def get_player_stats():
-    delay = random.uniform(0.5, 1.0)
+    delay = random.uniform(0.25, 0.5)
     teams_today = get_todays_games()
 
     data = None
@@ -37,27 +37,31 @@ def get_player_stats():
     for game in teams_today:
         game_title = game["away_tricode"] + " " + game["home_tricode"]      
         if game_title in data: 
-            player_stats = defaultdict(lambda: defaultdict(lambda: {"lines": {}, "last_10_game_stats": {}}))
+            player_stats = defaultdict(lambda: defaultdict(lambda: {"lines": {}, "player_id": None, "last_10_game_stats": {}}))
             game_markets = data[game_title]
             
             # loop through each market (P R A 3s)
             for market in game_markets:
                 for player in game_markets[market]:
-                    player_id = get_player_id(player_name=str(player), threshold=90)
                     time.sleep(delay)
-                    team_abbreviation = get_player_team(player_id=player_id)
+                    player_id = get_player_id(player_name=str(player), threshold=90)
+                    if player_id == None:
+                        print(f"No ID for: {str(player)}")
+                        continue # skip current player
+
+                    team_abbreviation = get_player_team(player_id)
 
                     line = game_markets[market][player]["line"]  # get current market line
                     player_stats[team_abbreviation][player]["lines"][market] = float(line)  # add market and line to lines property
                     
-                    
-                    if not player_stats[team_abbreviation][player]["last_10_game_stats"]:
-                        print(f"Fetching stats for {player}")
-                        last_1_game_stats, last_5_game_stats, last_10_game_stats = get_last_10_game_stats(player_id=player_id)
+                    if not player_stats[team_abbreviation][player]["player_id"]:
+                        print(f"{player} ID: {player_id}")
+                        player_stats[team_abbreviation][player]["player_id"] = player_id
+                        full_10_game_logs, last_1_game_stats, last_5_game_stats, last_10_game_stats = get_last_10_game_stats(player_id)
                         player_stats[team_abbreviation][player]["last_1_game_stats"] = last_1_game_stats
                         player_stats[team_abbreviation][player]["last_5_game_stats"] = last_5_game_stats
                         player_stats[team_abbreviation][player]["last_10_game_stats"] = last_10_game_stats
-                        
+                        player_stats[team_abbreviation][player]["full_10_game_logs"] = full_10_game_logs
                         
             todays_stats[game_title] = player_stats
 

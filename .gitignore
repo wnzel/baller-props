@@ -83,5 +83,6 @@ dist-ssr
 */test
 */test/*
 
+backup.txt
 Over_*
 Under_*

@@ -13,5 +13,7 @@ RUN pip install -r requirements.txt
 # Copy the rest of the backend code
 COPY . .
 
+EXPOSE 8080
+
 # Specify default command
-CMD ["python", "app.py"] 
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]

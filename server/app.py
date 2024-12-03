@@ -1,31 +1,33 @@
-from flask import Flask, jsonify
-from flask_cors import CORS
+from fastapi import FastAPI
+from fastapi_utilities import repeat_every
 
 from nba.get_todays_games import get_todays_games
 from nba.nba_stats import get_player_stats
 
-app = Flask(__name__)
-CORS(app)
+app = FastAPI()
 
-STATS_CACHE = None
+STATS_CACHE = {}
 
+@app.on_event("startup")
+@repeat_every(seconds=450)
 def cache_player_stats():
     global STATS_CACHE
     print("Fetching stats. . .")
     STATS_CACHE = get_player_stats()
     print("Finished caching")
-    
-# cache stats for frontend
-cache_player_stats()
 
-@app.route("/api/nba/games", methods=["GET"])
+@app.get("/api/nba/games")
 def todays_games():
     games = get_todays_games()
-    return jsonify(games)
+    return games
 
-@app.route("/api/nba/stats", methods=["GET"])
+@app.get("/api/nba/stats")
 def player_stats():
     return STATS_CACHE
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+##############################
+# FOR LOCAL DEVELOPMENT ONLY #
+##############################
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8080)

@@ -18,7 +18,13 @@ def get_todays_games():
 
     teams_today = []
     for _, row in games.iterrows():
+        game_date = row["GAME_DATE_EST"]
+        game_date_object = datetime.strptime(game_date, "%Y-%m-%dT%H:%M:%S")
+        formatted_game_date = game_date_object.strftime("%b %d")
+        
         current_game = {
+            "game_date_est": row["GAME_DATE_EST"],
+            "formatted_date": formatted_game_date,
             "game_status": row["GAME_STATUS_ID"], # 1 not started, 2 live, 3 finished
             
             "home_id": row["HOME_TEAM_ID"],

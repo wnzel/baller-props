@@ -38,31 +38,27 @@ def get_player_stats():
         game_title = game["away_tricode"] + " " + game["home_tricode"]      
         if game_title in data: 
             player_stats = defaultdict(lambda: defaultdict(lambda: {"lines": {}, "player_id": None, "last_10_game_stats": {}}))
-            game_markets = data[game_title]
+            players = data[game_title]
             
-            # loop through each market (P R A 3s)
-            for market in game_markets:
-                for player in game_markets[market]:
-                    time.sleep(delay)
-                    player_id = get_player_id(player_name=str(player), threshold=90)
-                    if player_id == None:
-                        print(f"No ID for: {str(player)}")
-                        continue # skip current player
+            for player in players:
+                time.sleep(delay)
+                player_id = get_player_id(player_name=str(player), threshold=90)
 
-                    team_abbreviation = get_player_team(player_id)
+                if player_id == None:
+                    print(f"No ID for: {str(player)}")
+                    continue # skip current player
 
-                    line = game_markets[market][player]["line"]  # get current market line
-                    player_stats[team_abbreviation][player]["lines"][market] = float(line)  # add market and line to lines property
-                    
-                    if not player_stats[team_abbreviation][player]["player_id"]:
-                        print(f"{player} ID: {player_id}")
-                        player_stats[team_abbreviation][player]["player_id"] = player_id
-                        full_10_game_logs, last_1_game_stats, last_5_game_stats, last_10_game_stats = get_last_10_game_stats(player_id)
-                        player_stats[team_abbreviation][player]["last_1_game_stats"] = last_1_game_stats
-                        player_stats[team_abbreviation][player]["last_5_game_stats"] = last_5_game_stats
-                        player_stats[team_abbreviation][player]["last_10_game_stats"] = last_10_game_stats
-                        player_stats[team_abbreviation][player]["full_10_game_logs"] = full_10_game_logs
-                        
+                team_abbreviation = get_player_team(player_id)
+                player_stats[team_abbreviation][player]["player_id"] = player_id
+                player_stats[team_abbreviation][player]["lines"] = players[player]
+                
+                time.sleep(delay)
+                full_10_game_logs, last_1_game_stats, last_5_game_stats, last_10_game_stats = get_last_10_game_stats(player_id)
+                player_stats[team_abbreviation][player]["last_1_game_stats"] = last_1_game_stats
+                player_stats[team_abbreviation][player]["last_5_game_stats"] = last_5_game_stats
+                player_stats[team_abbreviation][player]["last_10_game_stats"] = last_10_game_stats
+                player_stats[team_abbreviation][player]["full_10_game_logs"] = full_10_game_logs
+         
             todays_stats[game_title] = player_stats
 
     return todays_stats

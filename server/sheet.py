@@ -1,5 +1,6 @@
 import pandas as pd
 from dotenv import load_dotenv
+from openpyxl.utils import get_column_letter
 from openpyxl import load_workbook
 from openpyxl import load_workbook
 from openpyxl.formatting.rule import ColorScaleRule
@@ -32,7 +33,7 @@ for game_title in data:
             lines = data[game_title][team][player]["lines"]
             for market in lines:
                 # Get the projected line for the market
-                projected_line = lines[market]
+                projected_line = float(lines[market])
                 
                 # Initialize a counter for times hit over
                 times_hit_over = 0

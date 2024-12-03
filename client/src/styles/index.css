@@ -8,3 +8,28 @@ body {
   background-color: #0f0e0e;
   color: white;
 }
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
+
+/* styles.css */
+.game-title-desktop {
+  display: block;
+}
+
+.game-title-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .game-title-desktop {
+    display: none;
+  }
+
+  .game-title-mobile {
+    display: block;
+  }
+}

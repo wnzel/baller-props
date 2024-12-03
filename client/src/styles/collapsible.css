@@ -1,0 +1,4 @@
+.collapsible-content {
+  overflow: hidden;
+  transition: max-height 750ms ease-in-out;
+}

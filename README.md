@@ -1,2 +1,2 @@
 Sports Analytics Website
--Using React and Python
+Using React and Python
